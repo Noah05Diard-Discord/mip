@@ -2,7 +2,8 @@
 ## Minecraft Internet Projekt
 
 Collaborators:
- - HHOY
+ - HHOY - Code
+ - Lfrx - Docs
 
 To see some information about the protocol go to Protocol.md
 

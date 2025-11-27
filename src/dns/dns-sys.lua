@@ -1,4 +1,6 @@
-local modem = peripheral.find"Modem"
+local modem = peripheral.find"modem"
+modem.open(80)
+
 local lookup = {}
 
 local function loadLookup()
@@ -23,8 +25,15 @@ local function lookupThread()
         local ev = {os.pullEvent("modem_message")}
         local p = ev[5]
         if p.destination == "DNS" then
-            if action == "get_domain" then
-                
+            if p.action == "get_domain" then
+                modem.transmit(80,80,{
+                    ["destination"] = "CLIENT",
+                    ["id"] = p.id,
+                    ["reply"] = {
+                        ["success"] = lookup[p.arg] and true or false,
+                        ["pcId"] = lookup[p.arg],
+                    }
+                })
             end
         end
     end
@@ -37,4 +46,4 @@ local function interfaceThread()
     end
 end
 
-parallel.waitForAll(lookupThread)
+parallel.waitForAll(lookupThread,interfaceThread)

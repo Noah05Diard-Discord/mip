@@ -12,3 +12,15 @@ Here is how you get a domain if it exists. Send this to PORT 80 on your modem (t
 }
 ```
 
+Reply:
+```lua
+{
+    ["destination"] = "CLIENT",
+    ["id"] = <the id sent>,
+    ["reply"] = {
+        ["success"] = true / false,
+        -- if true these are the things more
+        ["pcId"] = <Server PC Id>,
+    }
+}
+```

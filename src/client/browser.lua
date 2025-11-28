@@ -1,5 +1,22 @@
 local modem = peripheral.find("modem")
 
+local defaultStyle = {
+    text = {
+        background=colors.black,
+        text=colors.white,
+    },
+    button = {
+        background=colors.gray,
+        text=colors.white
+    }
+}
+
+local pageData = {}
+local style = defaultStyle
+
+local page = ""
+local site = ""
+
 modem.open(80)
 
 local function resolve(hostname)
@@ -28,6 +45,48 @@ local function resolve(hostname)
     end
 end
 
+local function renderPage()
+    for i,a in ipairs(pageData.objs) do
+        if a.type == "text" then
+            term.setCursorPos(1,i)
+            local styles = style[a.type]
+            if a.class then
+                styles = style[a.class]
+            end
+            term.setBackgroundColor(style.background)
+            term.setTextColor(style.text)
+            write(a.text)
+        elseif a.type == "button" then
+            term.setCursorPos(1,i)
+            local styles = style[a.type]
+            if a.class then
+                styles = style[a.class]
+            end
+            write(a.text)
+        end
+    end
+end
+
+local function mainLoop()
+    while true do
+        local ev = {os.pullEvent()}
+    end
+end
+
+term.clear()
+
+pageData = {
+    objs={
+        {type="text",text="TEXTSHIT"},
+        {type="button",text="button"}
+    }
+}
+
+renderPage()
+
+sleep(1)
+
+--[[
 write("Write domain: ")
 local domain = read()
-print(resolve(domain))
+print(resolve(domain))]]

@@ -8,6 +8,10 @@ local defaultStyle = {
     button = {
         background=colors.gray,
         text=colors.white
+    },
+    body = {
+        background=colors.black,
+        text=colors.white
     }
 }
 
@@ -45,6 +49,35 @@ local function resolve(hostname)
     end
 end
 
+local function loadPage(page,file)
+    local pagedata = {}
+    if file then
+        if fs.exists(page) then
+            local handle
+        else
+            style = {
+                button = {
+                    background = colors.orange,
+                    text = colors.white
+                },
+                text = {
+                    background = colors.red,
+                    text = colors.white,
+                }
+            }
+            pagedata = {
+                objs={
+                    {type="text",text="Error:"},
+                    {type="text",text="File not found"}
+                }
+            }
+        end
+    else
+        -- Do request
+    end
+    pageData = pagedata
+end
+
 local function renderPage()
     for i,a in ipairs(pageData.objs) do
         if a.type == "text" then
@@ -53,8 +86,9 @@ local function renderPage()
             if a.class then
                 styles = style[a.class]
             end
-            term.setBackgroundColor(style.background)
-            term.setTextColor(style.text)
+            
+            term.setBackgroundColor(styles.background)
+            term.setTextColor(styles.text)
             write(a.text)
         elseif a.type == "button" then
             term.setCursorPos(1,i)
@@ -62,6 +96,8 @@ local function renderPage()
             if a.class then
                 styles = style[a.class]
             end
+            term.setBackgroundColor(styles.background)
+            term.setTextColor(styles.text)
             write(a.text)
         end
     end
@@ -75,16 +111,8 @@ end
 
 term.clear()
 
-pageData = {
-    objs={
-        {type="text",text="TEXTSHIT"},
-        {type="button",text="button"}
-    }
-}
-
+loadPage("Site",true)
 renderPage()
-
-sleep(1)
 
 --[[
 write("Write domain: ")

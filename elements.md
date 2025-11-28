@@ -4,6 +4,7 @@
 {
     ["type"] = "video",
     ["fps"] = 2,
+    ["frame"] = 1,
     ["title"] = "My Video",
     ["frames"] = {
         {
@@ -11,6 +12,14 @@
             ["subtitles"]={}
         }
     },
+    ["id"] = "" -- For scripting
+}
+```
+- Picture
+```lua
+{
+    ["type"] = "picture",
+    ["nfp"] = {},
     ["id"] = "" -- For scripting
 }
 ```

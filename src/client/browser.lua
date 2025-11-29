@@ -65,7 +65,7 @@ local function resolvePage(pcId, page)
             local p = ev[5]
             if p.destination == "CLIENT" and p.id == id  then
                 if p.reply.success then
-                    return p.reply.pagedata
+                    return p.reply.data
                 else
                     return nil, "Page not found."
                 end

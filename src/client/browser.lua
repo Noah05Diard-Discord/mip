@@ -49,13 +49,34 @@ local function resolve(hostname)
     end
 end
 
-local function loadPage(page,file)
+function split(inputstr, sep)
+  if sep == nil then
+    sep = "%s"
+  end
+  local t = {}
+  for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+    table.insert(t, str)
+  end
+  return t
+end
+local function separateString(str)
+    -- Separate the page and hostname from like example.com/abc and returns {"example.com","abc"}
+    local s = split(str,"/")
+end
+local function getPage(hostname, page)
+    -- Get a page for the renderer
+    -- If the hostname is file: then automatically go to loadPage
+    if hostname == "file:" then
+
+    end
+end
+local function loadPage(filePath)
     local pagedata = {}
-    if file then
-        if fs.exists(page) then
-            local handle
-        else
-            style = {
+    if fs.exists(filePath) then
+        -- Try to load it
+
+    else
+        style = {
                 button = {
                     background = colors.orange,
                     text = colors.white
@@ -71,11 +92,7 @@ local function loadPage(page,file)
                     {type="text",text="File not found"}
                 }
             }
-        end
-    else
-        -- Do request
     end
-    pageData = pagedata
 end
 
 local function renderPage()

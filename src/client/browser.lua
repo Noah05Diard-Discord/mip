@@ -3,15 +3,15 @@ local modem = peripheral.find("modem")
 local defaultStyle = {
     text = {
         background=colors.black,
-        text=colors.white,
+        textColor=colors.white,
     },
     button = {
         background=colors.gray,
-        text=colors.white
+        textColor=colors.white
     },
     body = {
         background=colors.black,
-        text=colors.white
+        textColor=colors.white
     }
 }
 
@@ -67,32 +67,66 @@ local function getPage(hostname, page)
     -- Get a page for the renderer
     -- If the hostname is file: then automatically go to loadPage
     if hostname == "file:" then
-
+        return loadPage(page)
     end
 end
 local function loadPage(filePath)
     local pagedata = {}
     if fs.exists(filePath) then
         -- Try to load it
-
+        local file = fs.open(filePath,"r")
+        local content = file.readAll()
+        file.close()
+        local data = textutils.unserialize(content)
+        if data then
+            pagedata = data
+            pagedata["style"] = pagedata["style"] or defaultStyle
+            return pagedata
+        else
+            style = {
+                button = {
+                    background = colors.orange,
+                    textColor = colors.white
+                },
+                text = {
+                    background = colors.red,
+                    textColor = colors.white,
+                }
+            }
+            pagedata = {
+                objs={
+                    {type="text",text="Error:"},
+                    {type="text",text="Failed to parse page data."}
+                },
+                ["style"] = style,
+                ["title"] = "Error",
+                ["description"] = "The requested file could not be parsed.",
+                ["script"] = "--Disabled--",
+            }
+        end
     else
         style = {
                 button = {
                     background = colors.orange,
-                    text = colors.white
+                    textColor = colors.white
                 },
                 text = {
                     background = colors.red,
-                    text = colors.white,
+                    textColor = colors.white,
                 }
             }
             pagedata = {
                 objs={
                     {type="text",text="Error:"},
                     {type="text",text="File not found"}
-                }
+                },
+                ["style"] = style,
+                ["title"] = "Error",
+                ["description"] = "The requested file was not found.",
+                ["script"] = "--Disabled--",
             }
     end
+    return pagedata
 end
 
 local function renderPage()

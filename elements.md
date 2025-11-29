@@ -12,7 +12,9 @@
             ["subtitles"]={}
         }
     },
-    ["id"] = "" -- For scripting
+    ["id"] = "", -- For scripting
+    ["x"] = 1,
+    ["y"] = 1,
 }
 ```
 - Picture
@@ -20,7 +22,9 @@
 {
     ["type"] = "picture",
     ["nfp"] = {},
-    ["id"] = "" -- For scripting
+    ["id"] = "", -- For scripting
+    ["x"] = 1,
+    ["y"] = 1,
 }
 ```
 - Text
@@ -30,6 +34,8 @@
     ["text"] = "Hello, World",
     ["class"] = "", -- For styling
     ["id"] = "",    -- For Scripting
+    ["x"] = 1,
+    ["y"] = 1,
 }
 ```
 - Button
@@ -41,6 +47,8 @@
     ["page"] = "index",
     ["class"] = "", -- For styling
     ["id"] = "", -- For Scripting
+    ["x"] = 1,
+    ["y"] = 1,
 }
 ```
 - TextBox
@@ -50,6 +58,8 @@
     ["placeholder"] = "Placeholder",
     ["text"] = "",
     ["class"] = "",
-    ["id"] = ""
+    ["id"] = "",
+    ["x"] = 1,
+    ["y"] = 1,
 }
 ```

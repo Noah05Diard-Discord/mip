@@ -49,6 +49,33 @@ local function resolve(hostname)
     end
 end
 
+local function resolvePage(pcId, page)
+    local id = math.random(1000,9999)
+    modem.transmit(80,80,{
+        ["destination"] = "SERVER",
+        ["action"] = "get_page",
+        ["page"] = page,
+        ["id"] = id,
+        ["pcId"] = pcId,
+    })
+    local timer = os.startTimer(5)
+    while true do
+        local ev = {os.pullEvent()}
+        if ev[1] == "modem_message" then
+            local p = ev[5]
+            if p.destination == "CLIENT" and p.id == id  then
+                if p.reply.success then
+                    return p.reply.pagedata
+                else
+                    return nil, "Page not found."
+                end
+            end
+        elseif ev[1] == "timer" and ev[2] == timer then
+            return nil, "Page request timed out."
+        end
+    end
+end
+
 function split(inputstr, sep)
   if sep == nil then
     sep = "%s"
@@ -68,6 +95,62 @@ local function getPage(hostname, page)
     -- If the hostname is file: then automatically go to loadPage
     if hostname == "file:" then
         return loadPage(page)
+    end
+    -- Otherwise, resolve the domain and request the page over the network
+    local pcId, err = resolve(hostname)
+    if not pcId then
+        -- Failed to resolve domain
+        style = {
+                button = {
+                    background = colors.orange,
+                    textColor = colors.white
+                },
+                text = {
+                    background = colors.red,
+                    textColor = colors.white,
+                }
+            }
+        local pagedata = {
+                objs={
+                    {type="text",text="Error:"},
+                    {type="text",text="Failed to resolve domain."}
+                },
+                ["style"] = style,
+                ["title"] = "Error",
+                ["description"] = "The requested domain could not be resolved. ("..err..")",
+                ["script"] = "--Disabled--",
+            }
+        return pagedata
+    else
+        -- Domain resolved, request page
+        local pagedata, err = resolvePage(pcId, page)
+        if not pagedata then
+            -- Failed to get page
+            style = {
+                button = {
+                    background = colors.orange,
+                    textColor = colors.white
+                },
+                text = {
+                    background = colors.red,
+                    textColor = colors.white,
+                }
+            }
+            local pagedata = {
+                objs={
+                    {type="text",text="Error:"},
+                    {type="text",text="Failed to load page."}
+                },
+                ["style"] = style,
+                ["title"] = "Error",
+                ["description"] = "The requested page could not be loaded. ("..err..")",
+                ["script"] = "--Disabled--",
+            }
+            return pagedata
+        else
+            pagedata["style"] = pagedata["style"] or defaultStyle
+            return pagedata
+        end
     end
 end
 local function loadPage(filePath)

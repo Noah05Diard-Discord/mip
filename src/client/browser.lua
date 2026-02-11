@@ -213,39 +213,61 @@ local function loadPage(filePath)
 end
 
 local function renderPage()
-    for i,a in ipairs(pageData.objs) do
-        if a.type == "text" then
-            term.setCursorPos(1,i)
-            local styles = style[a.type]
-            if a.class then
-                styles = style[a.class]
+    local d = pageData
+    -- prepare style
+    d.style = d.style or defaultStyle
+    -- add missing style elements
+    for k,v in pairs(defaultStyle) do
+        if not d.style[k] then
+            d.style[k] = v
+        else
+            for k2,v2 in pairs(v) do
+                if not d.style[k][k2] then
+                    d.style[k][k2] = v[k2]
+                end
             end
-            
-            term.setBackgroundColor(styles.background)
-            term.setTextColor(styles.text)
-            write(a.text)
-        elseif a.type == "button" then
-            term.setCursorPos(1,i)
-            local styles = style[a.type]
-            if a.class then
-                styles = style[a.class]
+        end
+    end
+    -- prepare elements
+    -- aka add y + 2 for the topbar
+    for i,obj in ipairs(d.objs) do
+        if obj.y then
+            if obj.y < 3 then
+                obj.y = obj.y + 2
             end
-            term.setBackgroundColor(styles.background)
-            term.setTextColor(styles.text)
-            write(a.text)
+        end
+    end
+    -- render
+    term.setBackgroundColor(d.style.body.background)
+    term.setTextColor(d.style.body.textColor)
+    term.clear()
+    local y = 3
+    for i, v in ipais(d.objs) do
+        if not v.x then v.x = 1 end
+        if not v.y then v.y = y end
+        if v.type == "text" then
+            term.setCursorPos(v.x, v.y)
+            term.setBackgroundColor(d.style.text.background)
+            term.setTextColor(d.style.text.textColor)
+            term.write(v.text)
+        elseif v.type == "button" then
+            term.setCursorPos(v.x, v.y)
+            term.setBackgroundColor(d.style.button.background)
+            term.setTextColor(d.style.button.textColor)
+            term.write(v.text)
         end
     end
 end
 
 local function mainLoop()
     while true do
-        local ev = {os.pullEvent()}
+        local e = {os.pullEvent()}
     end
 end
 
 term.clear()
 
-loadPage("Site",true)
+loadPage("test.txt")
 renderPage()
 
 --[[

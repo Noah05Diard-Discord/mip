@@ -149,7 +149,7 @@ local function loadPage(filePath)
             pagedata = {
                 objs={
                     {type="text",text="Error:"},
-                    {type="text",text="Failed to parse page data."}
+                    {type="text",text="Failed to parse page data."},
                     {type="text",text="Error at unserialize step."}
                 },
                 ["style"] = style,

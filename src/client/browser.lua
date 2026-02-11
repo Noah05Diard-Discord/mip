@@ -237,7 +237,7 @@ local function renderPage()
             end
         end
     end
-    -- render
+    -- render 
     term.setBackgroundColor(d.style.body.background)
     term.setTextColor(d.style.body.textColor)
     term.clear()

@@ -163,7 +163,7 @@ local function loadPage(filePath)
             dump(data)
             return pagedata
         end
-        local succ,result = pcall(succ())
+        local succ,result = pcall(succ)
         data = result
         if succ then
             pagedata = data

@@ -149,13 +149,15 @@ local function loadPage(filePath)
             pagedata = {
                 objs={
                     {type="text",text="Error:"},
-                    {type="text",text="Failed to parse page data. Error at stage : unserialize file"}
+                    {type="text",text="Failed to parse page data."}
+                    {type="text",text="Error at unserialize step."}
                 },
                 ["style"] = style,
                 ["title"] = "Error",
                 ["description"] = "The requested file could not be parsed.",
                 ["script"] = "",
             }
+            printError(load("return "..data,"site",nil,{})())
         end
     else
         style = {

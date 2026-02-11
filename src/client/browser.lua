@@ -19,7 +19,7 @@ local defaultStyle = {
     }
 }
 
-local function dumpErr(err)
+local function dump(err)
     local handle = fs.open("dump","w")
     handle.write(err)
     handle.close()

@@ -19,6 +19,12 @@ local defaultStyle = {
     }
 }
 
+local function dumpErr(err)
+    local handle = fs.open("dump","w")
+    handle.write(err)
+    handle.close()
+end
+
 local pageData = {}
 local style = defaultStyle
 local renderedElements = {}

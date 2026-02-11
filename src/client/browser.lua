@@ -160,6 +160,7 @@ local function loadPage(filePath)
                 ["description"] = "The requested file could not be parsed.",
                 ["script"] = "",
             }
+            dump(data)
             return pagedata
         end
         local succ,result = data()
@@ -191,7 +192,7 @@ local function loadPage(filePath)
                 ["description"] = "The requested file could not be parsed.",
                 ["script"] = "",
             }
-            
+            dump(result)
         end
     else
         style = {

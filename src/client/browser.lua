@@ -157,7 +157,7 @@ local function loadPage(filePath)
                 ["description"] = "The requested file could not be parsed.",
                 ["script"] = "",
             }
-            printError(load("return "..content,"site",nil,{})())
+            printError(content)
         end
     else
         style = {

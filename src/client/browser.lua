@@ -53,7 +53,7 @@ local function parseURL(url)
         return nil, nil
     end
     
-    if parts[1] == "file:" then
+    if parts[1] == "file" then
         table.remove(parts, 1)
         return "file:", table.concat(parts, "/")
     else

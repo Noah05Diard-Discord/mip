@@ -137,7 +137,7 @@ local function loadPage(filePath)
         local content = file.readAll()
         file.close()
         local succ, data = load("return "..content,"page",nil,{colors=colors})
-        if not succ or data == nil then
+        if not succ then
             style = {
                 button = {
                     background = colors.orange,

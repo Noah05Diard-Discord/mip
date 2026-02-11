@@ -137,7 +137,7 @@ local function loadPage(filePath)
         local content = file.readAll()
         file.close()
         local succ, data = load("return "..content,"page",nil,{colors=colors})
-        if not succ then
+        if not succ or data == nil then
             style = {
                 button = {
                     background = colors.orange,
@@ -153,7 +153,7 @@ local function loadPage(filePath)
                     {type="text",text="Error:"},
                     {type="text",text="Failed to parse page data."},
                     {type="text",text="Error at unserialize step."},
-                    {type="text",text="Error: "..data}
+                    {type="text",text="Error: "..(data or "Unknown")}
                 },
                 ["style"] = style,
                 ["title"] = "Error",
@@ -163,7 +163,7 @@ local function loadPage(filePath)
             dump(data)
             return pagedata
         end
-        local succ,result = data()
+        local succ,result = pcall(succ())
         data = result
         if succ then
             pagedata = data

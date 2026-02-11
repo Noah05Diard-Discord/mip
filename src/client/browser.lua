@@ -130,12 +130,8 @@ local function loadPage(filePath)
         local file = fs.open(filePath,"r")
         local content = file.readAll()
         file.close()
-        local data = textutils.unserialize(content)
-        if data then
-            pagedata = data
-            pagedata["style"] = pagedata["style"] or defaultStyle
-            return pagedata
-        else
+        local succ, data = load("return "..content,"page",nil,{colors=colors})
+        if not succ then
             style = {
                 button = {
                     background = colors.orange,
@@ -150,14 +146,46 @@ local function loadPage(filePath)
                 objs={
                     {type="text",text="Error:"},
                     {type="text",text="Failed to parse page data."},
-                    {type="text",text="Error at unserialize step."}
+                    {type="text",text="Error at unserialize step."},
+                    {type="text",text="Error: "..data}
                 },
                 ["style"] = style,
                 ["title"] = "Error",
                 ["description"] = "The requested file could not be parsed.",
                 ["script"] = "",
             }
-            printError(content)
+            return pagedata
+        end
+        local succ,result = data()
+        data = result
+        if succ then
+            pagedata = data
+            pagedata["style"] = pagedata["style"] or defaultStyle
+            return pagedata
+        else
+            
+            style = {
+                button = {
+                    background = colors.orange,
+                    textColor = colors.white
+                },
+                text = {
+                    background = colors.red,
+                    textColor = colors.white,
+                }
+            }
+            pagedata = {
+                objs={
+                    {type="text",text="Error:"},
+                    {type="text",text="Failed to parse"},
+                    {type="text",text="Error: "..result}
+                },
+                ["style"] = style,
+                ["title"] = "Error",
+                ["description"] = "The requested file could not be parsed.",
+                ["script"] = "",
+            }
+            
         end
     else
         style = {

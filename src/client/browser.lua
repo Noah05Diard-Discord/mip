@@ -149,7 +149,7 @@ local function loadPage(filePath)
             pagedata = {
                 objs={
                     {type="text",text="Error:"},
-                    {type="text",text="Failed to parse page data."}
+                    {type="text",text="Failed to parse page data. Error at stage : unserialize file"}
                 },
                 ["style"] = style,
                 ["title"] = "Error",
@@ -469,7 +469,7 @@ local function runScript(script)
     -- Run in coroutine with instruction limit
     scriptCoroutine = coroutine.create(function()
         local instructionCount = 0
-        local maxInstructions = 100000
+        local maxInstructions = 1000000
         
         -- Hook to prevent infinite loops
         debug.sethook(function()
@@ -795,7 +795,7 @@ term.setCursorPos(1, 1)
 
 -- Load homepage or show blank page
 currentURL = "file:home.table"
-local hostname, pagePath = parseURL(currentURL)
+local hostname, pagePath = nil, ""
 if hostname then
     site = hostname
     page = pagePath

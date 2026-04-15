@@ -218,6 +218,11 @@ local function handleEvent(ev)
             pageChangeDialog()
         end
     end
+    if pagedata.eventHooks[ev] then
+        for i,a in pairs(pagedata.eventHooks) do
+            a(table.unpack(ev,2))
+        end
+    end
     local dmc = false -- "Did mouse collide?"
     for i,a in ipairs(pagedata.page.objs) do
         if a.type == "button" then

@@ -1,4 +1,5 @@
-local protocol = require("mitProtocol")
+local protocol = require("mipProtocol")
+local sandbox = require("sandbox")
 
 local w,h = term.getSize()
 
@@ -53,9 +54,23 @@ local function getColors(obj)
     return style.background, style.textColor
 end
 
+local function getBackground()
+    if pagedata.page.style["body"] then
+        return pagedata.page.style["body"].background
+    else
+        return defaultStyle["body"]["background"]
+    end
+end
+
 local renderers = {}
 
 renderers.text = function(obj)
+    term.setCursorPos(obj.x,obj.y)
+    setColors(getColors(obj))
+    term.write(obj.text)
+end
+
+renderers.button = function(obj)
     term.setCursorPos(obj.x,obj.y)
     setColors(getColors(obj))
     term.write(obj.text)
@@ -66,7 +81,11 @@ local function loadPage(page)
     pagedata.win = window.create(term.current(),1,2,w,h-1)
     pagedata.page = page
 
-    
+    if page.script then
+        local func = sandbox.load(page.script)
+        local cor = coroutine.wrap(func)
+        cor()
+    end
 end
 
 local function loadWeb(web,page)
@@ -83,14 +102,35 @@ local function loadWeb(web,page)
                     y = 1,
                 }
             },
+            style = {},
             title = "Error"
         })
     end
 end
 
+local function pageChangeDialog()
+    term.setCursorPos(1,1)
+    term.setBackgroundColor(colors.gray)
+    term.clear()
+    write("Address: ")
+    local addr = read()
+    write("Page: ")
+    local page = read()
+    loadWeb(addr,page)
+end
+
 local function render()
+    term.setCursorPos(1,1)
+    term.setBackgroundColor(colors.gray)
+    term.setTextColor(colors.white)
+    term.clearLine()
+    write(pagedata.page.title)
+    write(" | Press [pause] to change page")
     local t = term.current()
     term.redirect(pagedata.pagewin)
+
+    term.setBackgroundColor(getBackground())
+    term.clear()
 
     for i,a in ipairs(pagedata.page.objs) do
         if renderers[a.type] then
@@ -102,22 +142,57 @@ local function render()
 end
 
 local function isInText(x,y,obj)
-    return y==obj.y and x >= obj.x and x < obj.x+#obj.text
+    return y==obj.y and (x >= obj.x and x < (obj.x+#obj.text))
 end
 
 local function handleEvent(ev)
+    if ev[1] == "key" then
+        if ev[2] == keys.pause then
+            pageChangeDialog()
+        end
+    end
     for i,a in ipairs(pagedata.page.objs) do
         if a.type == "button" then
             if ev[1] == "mouse_click" then
-                if isInText(ev[3],ev[4],a) then
+                if isInText(ev[3],ev[4]-1,a) then
                     if a.web and a.page then
-                        
+                        loadWeb(a.web,a.page)
+                    elseif pagedata.eventHooks["button"] then
+                        for i,a2 in ipairs(pagedata.eventHooks["button"]) do
+                            a2(a.id,ev[2])
+                        end
                     end
                 end
             end
         end
     end
 end
+
+sandbox.registerApi("document",{
+    getElementById = function (id)
+        for i, a in ipairs(pagedata.page.objs) do
+            if a.id == id then
+                return a
+            end
+        end
+    end,
+    addElement = function(element)
+        table.insert(pagedata.page.objs,element)
+    end
+})
+
+sandbox.registerApi("event",{
+    hook = function(event,callback)
+        local e = pagedata.eventHooks[event]
+        if e then
+            table.insert(e,callback)
+        else
+            pagedata.eventHooks[event] = {
+                callback
+            }
+        end
+    end
+})
 
 local function browserLoop()
     while true do
@@ -126,3 +201,51 @@ local function browserLoop()
         handleEvent(ev)
     end
 end
+
+loadPage({
+    objs = {
+        {
+            type = "text",
+            text = "Greetings",
+            x = w/2,
+            y = 1,
+        },
+        {
+            type = "text",
+            text = "Welcome to the BROWSER",
+            class = "normal",
+            x = 1,
+            y = 2,
+        },
+        {
+            type = "button",
+            text = "Im a button",
+            id = "button",
+            x = 1,
+            y = 3
+        },
+        {
+            type = "text",
+            text = "press the button",
+            class = "normal",
+            id = "chn",
+            x = 1,
+            y = 4,
+        },
+    },
+    style = {
+        [".normal"] = {
+            background = colors.white,
+            textColor = colors.lightGray
+        }
+    },
+    title = "Home | Browser",
+    script = [[
+        document.getElementById("chn").text = "this is chnaged by a script"
+        event.hook("button",function()
+            document.getElementById("chn").text = "thx"
+        end)
+    ]]
+})
+
+browserLoop()

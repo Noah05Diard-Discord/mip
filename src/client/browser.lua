@@ -32,7 +32,8 @@ local pagedata = {
         script = nil
     },
     pagewin = window.create(term.current(),1,2,w,h-1),
-    selectedTextBox = nil
+    selectedTextBox = nil,
+    pcid = 0
 }
 
 local function setColors(bg,tx)
@@ -87,11 +88,57 @@ renderers.textbox = function(obj)
     term.write(obj.text == "" and obj.placeholder or obj.text)
 end
 
-local function loadPage(page)
+local function fileDialog()
+    local f = {}
+    local rf,rd;
+    local function setPath(p)
+        f = {
+            {text="...",call=function()
+                setPath(fs.getDir(p))
+            end}
+        }
+        for i,a in ipairs(fs.list(p)) do
+            local path = fs.combine(p,a)
+            table.insert(f,{
+                text = fs.isDir(path) and "folder:"..a or "file:"..a,
+                call = function()
+                    if fs.isDir(path) then
+                        setPath(path)
+                    else
+                        local fl = fs.open(path,"r")
+                        local d = fl.readAll()
+                        fl.close()
+                        rf,rd = a,d
+                    end
+                end
+            })
+        end
+    end
+    setPath("/")
+    repeat
+        term.setBackgroundColor(colors.gray)
+        term.clear()
+        for i,a in ipairs(f) do
+            term.setCursorPos(1,i)
+            term.write(a.text)
+        end
+        local e = {os.pullEvent()}
+        if e[1] == "mouse_click" then
+            local el = f[e[4]]
+            if el then
+                el.call()
+            end
+        end
+    until rf and rd
+    return rf,rd
+end
+
+local function loadPage(page,pcid)
     pagedata.eventHooks = {}
     pagedata.win = window.create(term.current(),1,2,w,h-1)
     pagedata.page = page
     pagedata.selectedTextBox = nil
+    pagedata.pcid = pcid or os.getComputerID()
 
     if page.script then
         local func = sandbox.load(page.script)
@@ -103,7 +150,7 @@ end
 local function loadWeb(web,page)
     local resolve,err = protocol.dnsLookup(web)
     if resolve then
-        loadPage(protocol.get_page(resolve,page))
+        loadPage(protocol.get_page(resolve,page),resolve)
     else
         loadPage({
             objs = {
@@ -241,6 +288,26 @@ sandbox.registerApi("event",{
                 callback
             }
         end
+    end
+})
+
+sandbox.registerApi("protocol",{
+    upload = function(file,data)
+        return protocol.upload(file,data)
+    end,
+    download = function(file)
+        return protocol.download(file)
+    end
+})
+
+sandbox.registerApi("browser",{
+    fileDialog = function()
+        return fileDialog()
+    end,
+    download = function(file,data)
+        local f = fs.open(fs.combine("/downloads/",fs.combine(file)),"w")
+        f.write(data)
+        f.close()
     end
 })
 

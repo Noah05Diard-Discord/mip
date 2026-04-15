@@ -63,3 +63,5 @@
     ["y"] = 1,
 }
 ```
+- PasswordBox
+```lua

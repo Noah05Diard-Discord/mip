@@ -38,6 +38,59 @@ event.hook("button",function(id,btn)
 end)
 ```
 
+## Mip
+### ```upload(file,data)```
+Uploads a file with data to the server.
+
+example
+```lua
+mip.upload("myfile.lua","print(\"Hello, World\")")
+```
+
+### ```download(file)```
+Downloads a file from the server
+
+example
+```lua
+local data = mip.download("myfile.lua")
+```
+
+## Browser
+
+### ```fileDialog()```
+Opens a file dialog and returns the name and data
+
+example
+```lua
+local file, data = browser.fileDialog()
+```
+
+### ```download(file,data)```
+Adds a file to the downloads/ folder
+
+example
+```lua
+browser.download("myfile.lua","print(\"Hello, World\")")
+```
+
+## Cookie
+
+### ```set(key,value)```
+Sets the cookie key to value
+
+example
+```lua
+cookie.set("session","913458967134576891345")
+```
+
+### ```get(key)```
+Returns the cookie value of key
+
+example
+```lua
+local ses = cookie.get("session")
+```
+
 # Builtin Events
 
 ### Button

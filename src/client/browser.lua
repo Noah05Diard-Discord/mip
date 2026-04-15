@@ -15,6 +15,10 @@ local defaultStyle = {
     ["button"] = {
         ["background"] = colors.lightGray,
         ["textColor"] = colors.black,
+    },
+    ["textbox"] = {
+        ["background"]= colors.gray,
+        ["textColor"] = colors.white
     }
 }
 
@@ -27,7 +31,8 @@ local pagedata = {
         description = {},
         script = nil
     },
-    pagewin = window.create(term.current(),1,2,w,h-1)
+    pagewin = window.create(term.current(),1,2,w,h-1),
+    selectedTextBox = nil
 }
 
 local function setColors(bg,tx)
@@ -76,10 +81,17 @@ renderers.button = function(obj)
     term.write(obj.text)
 end
 
+renderers.textbox = function(obj)
+    term.setCursorPos(obj.x,obj.y)
+    setColors(getColors(obj))
+    term.write(obj.text == "" and obj.placeholder or obj.text)
+end
+
 local function loadPage(page)
     pagedata.eventHooks = {}
     pagedata.win = window.create(term.current(),1,2,w,h-1)
     pagedata.page = page
+    pagedata.selectedTextBox = nil
 
     if page.script then
         local func = sandbox.load(page.script)
@@ -145,26 +157,64 @@ local function isInText(x,y,obj)
     return y==obj.y and (x >= obj.x and x < (obj.x+#obj.text))
 end
 
+local function isInTextBox(x,y,obj)
+    if #obj.placeholder > #obj.text then
+        return y==obj.y and (x >= obj.x and x < (obj.x+#obj.placeholder))
+    else
+        return y==obj.y and (x >= obj.x and x < (obj.x+#obj.text))
+    end
+end
+
 local function handleEvent(ev)
     if ev[1] == "key" then
         if ev[2] == keys.pause then
             pageChangeDialog()
         end
     end
+    local dmc = false -- "Did mouse collide?"
     for i,a in ipairs(pagedata.page.objs) do
         if a.type == "button" then
             if ev[1] == "mouse_click" then
                 if isInText(ev[3],ev[4]-1,a) then
+                    dmc = true
                     if a.web and a.page then
                         loadWeb(a.web,a.page)
                     elseif pagedata.eventHooks["button"] then
+                        
                         for i,a2 in ipairs(pagedata.eventHooks["button"]) do
                             a2(a.id,ev[2])
                         end
                     end
                 end
             end
+        elseif a.type == "textbox" then
+            if ev[1] == "mouse_click" then
+                if isInTextBox(ev[3],ev[4]-1,a) then
+                    dmc = true
+                    pagedata.selectedTextBox = a
+                end
+            elseif ev[1] == "char" then
+                if pagedata.selectedTextBox == a then
+                    a.text = a.text .. ev[2]
+                end
+            elseif ev[1] == "key" then
+                if pagedata.selectedTextBox == a then
+                    if ev[2] == keys.backspace then
+                        a.text = a.text:sub(1,-2)
+                    elseif ev[2] == keys.enter then
+                        pagedata.selectedTextBox = nil
+                        if pagedata.eventHooks["textbox_enter"] then
+                            for i,a2 in ipairs(pagedata.eventHooks["textbox_enter"]) do
+                                a2(a.id,a.text)
+                            end
+                        end
+                    end
+                end
+            end
         end
+    end
+    if ev[1] == "mouse_click" and not dmc then
+        pagedata.selectedTextBox = nil
     end
 end
 
@@ -232,6 +282,15 @@ loadPage({
             x = 1,
             y = 4,
         },
+        {
+            type = "textbox",
+            text = "",
+            placeholder = "Type",
+            class = "normal",
+            id = "s",
+            x = 1,
+            y = 5
+        }
     },
     style = {
         [".normal"] = {

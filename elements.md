@@ -65,3 +65,13 @@
 ```
 - PasswordBox
 ```lua
+{
+    ["type"] = "passbox",
+    ["placeholder"] = "Placeholder",
+    ["text"] = "",
+    ["class"] = "",
+    ["id"] = "",
+    ["x"] = 1,
+    ["y"] = 1,
+}
+```

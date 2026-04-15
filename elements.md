@@ -75,3 +75,26 @@
     ["y"] = 1,
 }
 ```
+- UploadButton
+```lua
+{
+    ["type"] = "uploadbutton",
+    ["text"] = "uploadbutton",
+    ["class"] = "", -- For styling
+    ["id"] = "", -- For Scripting
+    ["x"] = 1,
+    ["y"] = 1,
+}
+```
+- DownloadButton
+```lua
+{
+    ["type"] = "downloadbutton",
+    ["text"] = "downloadbutton",
+    ["class"] = "", -- For styling
+    ["id"] = "", -- For Scripting
+    ["x"] = 1,
+    ["y"] = 1,
+}
+```
+More coming soon!

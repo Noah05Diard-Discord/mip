@@ -144,9 +144,16 @@ style.setElement("body",{background=colors.gray,textColor=colors.white})
 ```
 # Builtin Events
 
-### Button
+### ```button```
 Activates on button click
 
 Arguments
 
 ```id: Button id | btn the mouse button used```
+
+### ```textbox_enter```
+Activates when you press enter on a textbox
+
+Arguments
+
+```id: Textbox ID```

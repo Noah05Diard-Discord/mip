@@ -22,6 +22,43 @@ local defaultStyle = {
     }
 }
 
+local browserRoot = fs.combine(fs.getDir(shell.getRunningProgram()),".mip_browse")
+
+local cookies = {}
+
+local function setCookie(site,k,v)
+    if not cookies[site] then
+        cookies[site] = {
+            [k] = v
+        }
+    end
+end
+
+local function getCookie(site,k)
+    if not cookies[site] then return nil end
+    return cookies[site][k]
+end
+
+local function saveCookies()
+    local f = fs.open(fs.combine(browserRoot,"cookies"),"w")
+    f.write(textutils.serialise(cookies))
+    f.close()
+end
+
+local function loadCookies()
+    if fs.exists(fs.combine("browserRoot","cookies")) then
+        local f = fs.open(fs.combine(browserRoot,"cookies"),"r")
+        local data = f.readAll()
+        f.close()
+        cookies = textutils.unserialise(data)
+    else
+        saveCookies()
+        loadCookies()
+    end
+end
+
+loadCookies()
+
 local pagedata = {
     eventHooks = {},
     page = {

@@ -444,74 +444,7 @@ local function browserLoop()
     end
 end
 
-loadPage({
-    objs = {
-        {
-            type = "text",
-            text = "Greetings",
-            x = w/2,
-            y = 1,
-        },
-        {
-            type = "text",
-            text = "Welcome to the BROWSER",
-            class = "normal",
-            x = 1,
-            y = 2,
-        },
-        {
-            type = "button",
-            text = "Im a button",
-            id = "button",
-            x = 1,
-            y = 3
-        },
-        {
-            type = "text",
-            text = "press the button",
-            class = "normal",
-            id = "chn",
-            x = 1,
-            y = 4,
-        },
-        {
-            type = "textbox",
-            text = "",
-            placeholder = "Type",
-            id = "s",
-            x = 1,
-            y = 5
-        },
-        {
-            type = "button",
-            text = "N/A",
-            id = "cc",
-            x = 10,
-            y = 3
-        }
-    },
-    style = {
-        [".normal"] = {
-            background = colors.white,
-            textColor = colors.lightGray
-        }
-    },
-    title = "Home | Browser",
-    script = [[
-        local count = cookie.get("count") or 0
-        local cookiebtn = document.getElementById("cc")
-        cookiebtn.text = tostring(count)
-        document.getElementById("chn").text = "this is chnaged by a script"
-        event.hook("button",function(id)
-            if id == "cc" then
-                count = count + 1
-                cookiebtn.text = tostring(count)
-                cookie.set("count",count)
-            end
-            document.getElementById("chn").text = "thx"
-        end)
-    ]]
-})
+loadPage()
 
 local er
 

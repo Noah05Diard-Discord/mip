@@ -109,7 +109,22 @@ example
 ```lua
 local ses = cookie.get("session")
 ```
+## style
 
+### ```get(class:string)```
+Gets the style for a class
+
+example
+```lua
+style.get("myBtn")
+```
+
+### ```set(class:string,style:table)```
+Sets the style for a class
+
+example
+```lua
+style.set
 # Builtin Events
 
 ### Button

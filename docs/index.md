@@ -58,20 +58,20 @@ end)
 ```
 
 ## protocol
-### ```upload(file,data)```
+### ```upload(pcid,file,data)```
 Uploads a file with data to the server.
 
 example
 ```lua
-protocol.upload("myfile.lua","print(\"Hello, World\")")
+protocol.upload(0,"myfile.lua","print(\"Hello, World\")")
 ```
 
-### ```download(file)```
+### ```download(pcid,file)```
 Downloads a file from the server
 
 example
 ```lua
-local data = protocol.download("myfile.lua")
+local data = protocol.download(0,"myfile.lua")
 ```
 
 ## Browser

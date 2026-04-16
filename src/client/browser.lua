@@ -46,7 +46,7 @@ local function saveCookies()
 end
 
 local function loadCookies()
-    if fs.exists(fs.combine("browserRoot","cookies")) then
+    if fs.exists(fs.combine(browserRoot,"cookies")) then
         local f = fs.open(fs.combine(browserRoot,"cookies"),"r")
         local data = f.readAll()
         f.close()
@@ -81,12 +81,9 @@ end
 
 local function getColors(obj)
     local style = {}
-    if obj.class then
-        if pagedata.page.style["."..tostring(obj.class)] then
-            style = pagedata.page.style["."..tostring(obj.class)]
-        end
-    end
-    if pagedata.page.style[obj.type] then
+    if obj.class and pagedata.page.style["."..tostring(obj.class)] then
+        style = pagedata.page.style["."..tostring(obj.class)]
+    elseif pagedata.page.style[obj.type] then
         style = pagedata.page.style[obj.type]
     elseif pagedata.page.style["body"] then
         style = pagedata.page.style["body"]
@@ -445,7 +442,7 @@ loadPage({
     style = {
         [".normal"] = {
             background = colors.white,
-            textColor = colors.lightGray
+            textColor = colors.blue
         }
     },
     title = "Home | Browser",

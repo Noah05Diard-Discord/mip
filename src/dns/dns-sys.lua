@@ -20,12 +20,15 @@ end
 
 loadLookup()
 
+print(textutils.serialise(lookup))
+
 local function lookupThread()
     while true do
         local ev = {os.pullEvent("modem_message")}
         local p = ev[5]
         if p.destination == "DNS" then
             if p.action == "get_domain" then
+                print("\"",p.arg,"\"",lookup[p.arg])
                 modem.transmit(80,80,{
                     ["destination"] = "CLIENT",
                     ["id"] = p.id,

@@ -33,6 +33,7 @@ local pagedata = {
     },
     pagewin = window.create(term.current(),1,2,w,h-1),
     selectedTextBox = nil,
+    origin = "browser",
     pcid = 0
 }
 
@@ -70,13 +71,13 @@ end
 
 local renderers = {}
 
-renderers.text = function(obj)
-    term.setCursorPos(obj.x,obj.y)
+renderers.text = function(obj,i)
+    term.setCursorPos(obj.x or 1,obj.y or i)
     setColors(getColors(obj))
     term.write(obj.text)
 end
 
-renderers.button = function(obj)
+renderers.button = function(obj,i)
     term.setCursorPos(obj.x,obj.y)
     setColors(getColors(obj))
     term.write(obj.text)
@@ -133,7 +134,15 @@ local function fileDialog()
     return rf,rd
 end
 
+local function clr()
+    term.setCursorPos(1,1)
+    term.setBackgroundColor(colors.black)
+    term.clear()
+end
+
 local function loadPage(page,pcid)
+    page.style = page.style or {}
+    page.title = page.title or "Document"
     pagedata.eventHooks = {}
     pagedata.win = window.create(term.current(),1,2,w,h-1)
     pagedata.page = page
@@ -150,7 +159,20 @@ end
 local function loadWeb(web,page)
     local resolve,err = protocol.dnsLookup(web)
     if resolve then
-        loadPage(protocol.get_page(resolve,page),resolve)
+        local p, err = protocol.get_page(resolve,page)
+        if p then
+            loadPage(p,resolve)
+        else
+            loadPage({
+                objs = {
+                    {
+                        type = "text",
+                        text = err
+                    },
+                    title = "Error"
+                },
+            })
+        end
     else
         loadPage({
             objs = {
@@ -185,6 +207,10 @@ local function render()
     term.clearLine()
     write(pagedata.page.title)
     write(" | Press [pause] to change page")
+    term.setCursorPos(w,1)
+    term.setBackgroundColor(colors.red)
+    write("X")
+    term.setBackgroundColor(colors.black)
     local t = term.current()
     term.redirect(pagedata.pagewin)
 
@@ -193,7 +219,7 @@ local function render()
 
     for i,a in ipairs(pagedata.page.objs) do
         if renderers[a.type] then
-            renderers[a.type](a)
+            renderers[a.type](a,i)
         end
     end
 
@@ -212,11 +238,20 @@ local function isInTextBox(x,y,obj)
     end
 end
 
+
+
 local function handleEvent(ev)
     if ev[1] == "key" then
         if ev[2] == keys.pause then
             pageChangeDialog()
         end
+    elseif ev[1] == "mouse_click" then
+        if ev[3] == w and ev[4] == 1 then
+            error("Terminated",0)
+        end
+    elseif ev[1] == "term_resize" then
+        w,h = term.getSize()
+        pagedata.pagewin.reposition(1,2,w,h-1)
     end
     if pagedata.eventHooks[ev] then
         for i,a in pairs(pagedata.eventHooks) do
@@ -280,6 +315,12 @@ sandbox.registerApi("document",{
     end,
     addElement = function(element)
         table.insert(pagedata.page.objs,element)
+    end,
+    getPage = function()
+        return pagedata.origin
+    end,
+    redirect = function(web,page)
+        loadWeb(web,page)
     end
 })
 
@@ -379,4 +420,14 @@ loadPage({
     ]]
 })
 
-browserLoop()
+local suc, err = pcall(browserLoop)
+if not suc then
+    if err ~= "Terminated" then
+        clr()
+        print("MIP Browser Crashed! With error:")
+        printError(err)
+        os.pullEventRaw("char")
+    end
+end
+
+clr()

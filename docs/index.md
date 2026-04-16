@@ -8,7 +8,7 @@ This function allows you to get any element with an unique ID you have access to
 
 Example
 ```lua
-getElementById("idForText").text = "Hello"
+document.getElementById("idForText").text = "Hello"
 ```
 
 ### ```addElement(element: table)```
@@ -17,7 +17,7 @@ This function accepts a table like an element is.
 
 Example
 ```lua
-addElement({
+document.addElement({
     ["type"] = "text",
     ["text"] = "Hello",
     ["class"] = "aClass",
@@ -26,6 +26,25 @@ addElement({
     ["y"] = 1,
 })
 ```
+
+### ```getPage()```
+
+This function returns the page (not address)
+
+Example
+```lua
+local page = document.getPage()
+```
+
+### ```redirect(web: string, page: string)```
+
+Changes the current website. Web is address and page is the pae
+
+Example
+```lua
+document.redirect("example.com","/")
+```
+
 ---
 ## Event
 ### ```hook(event,callback)```

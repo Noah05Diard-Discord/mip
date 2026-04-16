@@ -1,0 +1,9 @@
+{
+    objs = {
+        {
+            type = "text",
+            text = "This is an example website"
+        }
+    },
+    title = "Example"
+}

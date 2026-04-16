@@ -371,6 +371,13 @@ sandbox.registerApi("document",{
     addElement = function(element)
         table.insert(pagedata.page.objs,element)
     end,
+    removeElementById = function(id)
+        for i,a in ipairs(pagedata.page.objs) do
+            if a.id == id then
+                table.remove(pagedata.page.objs,i)
+            end
+        end
+    end,
     getPage = function()
         return pagedata.origin
     end,
@@ -444,7 +451,82 @@ local function browserLoop()
     end
 end
 
-loadPage()
+
+
+loadPage({
+    objs = {
+        {
+            type = "text",
+            text = "Browser",
+            x = w/2-3,
+            y = 1
+        },
+        {
+            type = "textbox",
+            text = "",
+            id = "domain",
+            placeholder = "Type webdomain",
+            x = 1,
+            y = 2,
+        },
+        {
+            type = "textbox",
+            text = "",
+            id = "page",
+            placeholder = "Type pagename",
+            x = 1,
+            y = 3,
+        },
+        {
+            type = "button",
+            text = "Goto",
+            id = "goto",
+            x = 1,
+            y = 4,
+        },
+        {
+            type = "button",
+            text = "Add Bookmark",
+            id = "ab",
+            x = 6,
+            y = 4,
+        }
+    },
+    title = "home",
+    script = [[
+    local bookmarks = cookie.get("bookmarks") or {
+        ["moo.gle"] = ""
+    }
+    function renderBookmarks()
+        document.removeElementById("bookmark")
+        local i = 4
+        for k,v in pairs(bookmarks) do
+            i = i+1
+            document.addElement({
+                type = "button",
+                text = k,
+                id = "bookmark",
+                web = k,
+                page = v,
+                x = 1,
+                y = i
+            })
+        end
+    end
+    renderBookmarks()
+    event.hook("button",function(id)
+        local domain = document.getElementById("domain").text
+        local page = document.getElementById("page").text
+        if id == "goto" then
+            document.redirect(domain,page)
+        elseif id == "ab" then
+            bookmarks[domain] = page
+            renderBookmarks()
+            cookie.set("bookmarks",bookmarks)
+        end
+    end)
+    ]]
+})
 
 local er
 

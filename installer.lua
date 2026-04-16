@@ -50,9 +50,6 @@ else
     write("What program? ")
     local program = programs[read()]
     if not program then error("Unknown program",1)  end
-    write("Type main filepath: ")
-    local path = read()
-    local installed = {}
     for i,a in ipairs(program) do
         if type(a) == "number" then
             local req = http.get(root..components[a])
@@ -63,7 +60,4 @@ else
             f.close()
         end
     end
-    local f = fs.open(path,"w")
-    f.write(("shell.run(\"%s\")"):match(program.entry))
-    f.close()
 end

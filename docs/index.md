@@ -38,13 +38,13 @@ event.hook("button",function(id,btn)
 end)
 ```
 
-## Mip
+## protocol
 ### ```upload(file,data)```
 Uploads a file with data to the server.
 
 example
 ```lua
-mip.upload("myfile.lua","print(\"Hello, World\")")
+protocol.upload("myfile.lua","print(\"Hello, World\")")
 ```
 
 ### ```download(file)```
@@ -52,7 +52,7 @@ Downloads a file from the server
 
 example
 ```lua
-local data = mip.download("myfile.lua")
+local data = protocol.download("myfile.lua")
 ```
 
 ## Browser

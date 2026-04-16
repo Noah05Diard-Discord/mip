@@ -26,14 +26,6 @@ local browserRoot = fs.combine(fs.getDir(shell.getRunningProgram()),".mip_browse
 
 local cookies = {}
 
-local function setCookie(site,k,v)
-    if not cookies[site] then
-        cookies[site] = {
-            [k] = v
-        }
-    end
-end
-
 local function getCookie(site,k)
     if not cookies[site] then return nil end
     return cookies[site][k]
@@ -54,6 +46,18 @@ local function loadCookies()
     else
         saveCookies()
         loadCookies()
+    end
+end
+
+local function setCookie(site,k,v)
+    if not cookies[site] then
+        cookies[site] = {
+            [k] = v
+        }
+        saveCookies()
+    else
+        cookies[site][k] = v
+        saveCookies()
     end
 end
 
@@ -185,8 +189,24 @@ local function loadPage(page,pcid)
 
     if page.script then
         local func = sandbox.load(page.script)
-        local cor = coroutine.wrap(func)
+        local error = false
+        local cor = coroutine.wrap(function()
+            xpcall(func,function(err)
+                clr()
+                print(debug.traceback(err))
+                error = true
+            end)
+        end)
         cor()
+        if error then
+            os.pullEvent("char")
+            loadPage({
+                objs = {
+                    {type="text",text="Continue by pressing [pause]"}
+                },
+                title = "Script Error"
+            })
+        end
     end
 end
 
@@ -196,6 +216,7 @@ local function loadWeb(web,page)
         local p, err = protocol.get_page(resolve,page)
         if p then
             loadPage(p,resolve)
+            pagedata.origin = web
         else
             loadPage({
                 objs = {
@@ -391,6 +412,30 @@ sandbox.registerApi("browser",{
     end
 })
 
+sandbox.registerApi("cookie",{
+    set = function(k,v) 
+        setCookie(pagedata.origin,k,v)
+    end,
+    get = function(k)
+        return getCookie(pagedata.origin,k)
+    end
+})
+
+sandbox.registerApi("style",{
+    get = function(class)
+        return pagedata.page.style["."..tostring(class)]
+    end,
+    set = function(class,style)
+        pagedata.page.style["."..tostring(class)] = style
+    end,
+    getElement = function(element)
+        return pagedata.page.style[element]
+    end,
+    setElement = function(element)
+        return pagedata
+    end
+})
+
 local function browserLoop()
     while true do
         render()
@@ -433,33 +478,54 @@ loadPage({
             type = "textbox",
             text = "",
             placeholder = "Type",
-            class = "normal",
             id = "s",
             x = 1,
             y = 5
+        },
+        {
+            type = "button",
+            text = "N/A",
+            id = "cc",
+            x = 10,
+            y = 3
         }
     },
     style = {
         [".normal"] = {
             background = colors.white,
-            textColor = colors.blue
+            textColor = colors.lightGray
         }
     },
     title = "Home | Browser",
     script = [[
+        local count = cookie.get("count") or 0
+        local cookiebtn = document.getElementById("cc")
+        cookiebtn.text = tostring(count)
         document.getElementById("chn").text = "this is chnaged by a script"
-        event.hook("button",function()
+        event.hook("button",function(id)
+            if id == "cc" then
+                count = count + 1
+                cookiebtn.text = tostring(count)
+                cookie.set("count",count)
+            end
             document.getElementById("chn").text = "thx"
         end)
     ]]
 })
 
-local suc, err = pcall(browserLoop)
-if not suc then
+local er
+
+local suc, r = xpcall(browserLoop,function(err)
+    er = err
     if err ~= "Terminated" then
         clr()
         print("MIP Browser Crashed! With error:")
-        printError(err)
+        
+        printError(debug.traceback(err))
+    end
+end)
+if not suc then
+    if er ~= "Terminated" then
         os.pullEventRaw("char")
     end
 end

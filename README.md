@@ -3,7 +3,7 @@
 
 Collaborators:
  - HHOY - Code
--# Nothing left (67)
+- Nothing left
 
 To see some information about the protocol go to Protocol.md
 

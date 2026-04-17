@@ -3,7 +3,7 @@
 
 Collaborators:
  - HHOY - Code
- - Lfrx - Docs
+-# Nothing left (67)
 
 To see some information about the protocol go to Protocol.md
 

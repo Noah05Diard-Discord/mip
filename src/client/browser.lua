@@ -1,6 +1,8 @@
 local protocol = require("mipProtocol")
 local sandbox = require("sandbox")
 
+local diffY = 0
+
 local w,h = term.getSize()
 
 local defaultStyle = {
@@ -297,6 +299,8 @@ local function render()
     term.clear()
 
     for i,a in ipairs(pagedata.page.objs) do
+        a.y = a.y or i
+        a.y = a.y + diffY
         if renderers[a.type] then
             renderers[a.type](a,i)
         end

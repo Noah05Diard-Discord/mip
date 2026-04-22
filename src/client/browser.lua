@@ -341,13 +341,8 @@ local function handleEvent(ev)
     elseif ev[1] == "term_resize" then
         w,h = term.getSize()
         pagedata.pagewin.reposition(1,2,w,h-1)
-    elseif ev[1] == "mouse_scroll" then
+    elseif ev[1] == "mouse_scroll" and diffY+ev[2] < 0 and diffY+ev[2] > maxY then
         diffY = diffY + ev[2]
-        if diffY < 0 then
-            diffY = 0
-        elseif diffY > maxY then
-            diffY = maxY
-        end
     end
     if pagedata.eventHooks[ev] then
         for i,a in pairs(pagedata.eventHooks) do

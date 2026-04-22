@@ -211,6 +211,30 @@ local function loadPage(page,pcid)
 end
 
 local function loadWeb(web,page)
+    -- Check if web is number
+    if tonumber(web) ~= nil then
+        -- Me : Woman driver; Others << Ahh! >>
+        -- What a joke! (hhoy dont kill me)
+        -- OMG ITS A PCID!!!!1!1!
+        web = tonumber(web)
+        print("sup pcid")
+        local p, err = protocol.get_page(web,page)
+        if p then
+            loadPage(p,web)
+            pagedata.origin = tostring(web)
+        else
+            loadPage({
+                objs = {
+                    {
+                        type = "text",
+                        text = err
+                    },
+                    title = "Error"
+                },
+            })
+        end
+        return
+    end
     local resolve,err = protocol.dnsLookup(web)
     if resolve then
         local p, err = protocol.get_page(resolve,page)
@@ -261,7 +285,7 @@ local function render()
     term.setTextColor(colors.white)
     term.clearLine()
     write(pagedata.page.title)
-    write(" | Press [pause] to change page")
+    write(" | Press [pause] to change page or click here")
     term.setCursorPos(w,1)
     term.setBackgroundColor(colors.red)
     write("X")
@@ -293,16 +317,16 @@ local function isInTextBox(x,y,obj)
     end
 end
 
-
-
 local function handleEvent(ev)
     if ev[1] == "key" then
-        if ev[2] == keys.pause then
+        if ev[2] == keys.pause or ev[2] == keys.tab then
             pageChangeDialog()
         end
     elseif ev[1] == "mouse_click" then
         if ev[3] == w and ev[4] == 1 then
             error("Terminated",0)
+        elseif ev[3] ~= w and ev[4] == 1 then
+            pageChangeDialog()
         end
     elseif ev[1] == "term_resize" then
         w,h = term.getSize()
@@ -400,11 +424,11 @@ sandbox.registerApi("event",{
 })
 
 sandbox.registerApi("protocol",{
-    upload = function(file,data)
-        return protocol.upload(file,data)
+    upload = function(pcid,file,data)
+        return protocol.upload(pcid,file,data)
     end,
-    download = function(file)
-        return protocol.download(file)
+    download = function(pcid,file)
+        return protocol.download(pcid,file)
     end
 })
 
@@ -546,3 +570,4 @@ if not suc then
 end
 
 clr()
+r()

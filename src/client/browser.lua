@@ -343,6 +343,11 @@ local function handleEvent(ev)
         pagedata.pagewin.reposition(1,2,w,h-1)
     elseif ev[1] == "mouse_scroll" then
         diffY = diffY + ev[2]
+        if diffY < 0 then
+            diffY = 0
+        elseif diffY > maxY then
+            diffY = maxY
+        end
     end
     if pagedata.eventHooks[ev] then
         for i,a in pairs(pagedata.eventHooks) do

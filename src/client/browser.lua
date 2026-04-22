@@ -188,7 +188,7 @@ local function loadPage(page,pcid)
     pagedata.page = page
     pagedata.selectedTextBox = nil
     pagedata.pcid = pcid or os.getComputerID()
-
+    diffY = 0
     if page.script then
         local func = sandbox.load(page.script)
         local error = false
@@ -301,7 +301,7 @@ local function render()
     for i,a in ipairs(pagedata.page.objs) do
         a.y = a.y or i
         a.y = a.y + diffY
-        if renderers[a.type] then
+        if renderers[a.type] and a.y > 0 then
             renderers[a.type](a,i)
         end
     end
@@ -335,6 +335,8 @@ local function handleEvent(ev)
     elseif ev[1] == "term_resize" then
         w,h = term.getSize()
         pagedata.pagewin.reposition(1,2,w,h-1)
+    elseif ev[1] == "mouse_scroll" then
+        diffY = diffY + ev[2]
     end
     if pagedata.eventHooks[ev] then
         for i,a in pairs(pagedata.eventHooks) do

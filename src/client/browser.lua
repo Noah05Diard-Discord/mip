@@ -2,6 +2,7 @@ local protocol = require("mipProtocol")
 local sandbox = require("sandbox")
 
 local diffY = 0
+local maxY = 0
 
 local w,h = term.getSize()
 
@@ -297,6 +298,11 @@ local function render()
 
     term.setBackgroundColor(getBackground())
     term.clear()
+    for i,a in ipairs(pagedata.page.objs) do
+        if a.y > maxY then
+            maxY = a.y
+        end
+    end
 
     for i,a in ipairs(pagedata.page.objs) do
         a.y = a.y or i

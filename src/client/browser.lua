@@ -299,13 +299,13 @@ local function render()
     term.setBackgroundColor(getBackground())
     term.clear()
     for i,a in ipairs(pagedata.page.objs) do
+        a.y = a.y or i
         if a.y > maxY then
             maxY = a.y
         end
     end
 
     for i,a in ipairs(pagedata.page.objs) do
-        a.y = a.y or i
         a.y = a.y + diffY
         if renderers[a.type] and a.y > 0 then
             renderers[a.type](a,i)

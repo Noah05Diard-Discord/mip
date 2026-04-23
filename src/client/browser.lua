@@ -499,11 +499,11 @@ local function browserLoop()
         if not ev[1] == "timer" then
             render()
             os.cancelTimer(renderTimer)
-            renderTimer = os.startTimer(rendertimer)
+            renderTimer = os.startTimer(2)
         elseif ev[1] == "timer" and ev[2] == renderTimer then
             render()
             os.cancelTimer(renderTimer)
-            renderTimer = os.startTimer(rendertimer)
+            renderTimer = os.startTimer(2)
         end
     end
 end

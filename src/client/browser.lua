@@ -484,9 +484,9 @@ sandbox.registerApi("style",{
 })
 
 sandbox.registerApi("serialize",{
-    serialize = textutils.serialize
-    serializeJSON = textutils.serializeJSON
-    unserialize = textutils.unserialize
+    serialize = textutils.serialize,
+    serializeJSON = textutils.serializeJSON,
+    unserialize = textutils.unserialize,
     unserializeJSON = textutils.unserializeJSON
 })
 

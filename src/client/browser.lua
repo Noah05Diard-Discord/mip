@@ -432,7 +432,11 @@ sandbox.registerApi("event",{
                 callback
             }
         end
-    end
+    end,
+
+    startTimer = os.startTimer,
+
+    cancelTimer = os.cancelTimer
 })
 
 sandbox.registerApi("protocol",{
@@ -477,6 +481,13 @@ sandbox.registerApi("style",{
     setElement = function(element)
         return pagedata
     end
+})
+
+sandbox.registerApi("serialize",{
+    serialize = textutils.serialize
+    serializeJSON = textutils.serializeJSON
+    unserialize = textutils.unserialize
+    unserializeJSON = textutils.unserializeJSON
 })
 
 local function browserLoop()

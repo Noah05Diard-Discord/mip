@@ -492,11 +492,18 @@ sandbox.registerApi("serialize",{
 
 local function browserLoop()
     render()
+    local renderTimer = os.startTimer(2)
     while true do
         local ev = {os.pullEvent()}
         handleEvent(ev)
-        if ev[1] == "timer" then
+        if not ev[1] == "timer" then
             render()
+            os.cancelTimer(renderTimer)
+            renderTimer = os.startTimer(rendertimer)
+        elseif ev[1] == "timer" and ev[2] == renderTimer then
+            render()
+            os.cancelTimer(renderTimer)
+            renderTimer = os.startTimer(rendertimer)
         end
     end
 end

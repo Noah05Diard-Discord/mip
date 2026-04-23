@@ -344,8 +344,8 @@ local function handleEvent(ev)
     elseif ev[1] == "mouse_scroll" and diffY+ev[2] < 0 and diffY+ev[2] > maxY then
         diffY = diffY + ev[2]
     end
-    if pagedata.eventHooks[ev] then
-        for i,a in pairs(pagedata.eventHooks[ev]) do
+    if pagedata.eventHooks[ev[1]] then
+        for i,a in pairs(pagedata.eventHooks[ev[1]]) do
             a(table.unpack(ev,2))
         end
     end

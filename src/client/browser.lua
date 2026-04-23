@@ -494,6 +494,7 @@ local function browserLoop()
     render()
     local renderTimer = os.startTimer(0.1)
     while true do
+        render()
         local ev = {os.pullEvent()}
         handleEvent(ev)
         if not ev[1] == "timer" then

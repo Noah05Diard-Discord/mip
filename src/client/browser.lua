@@ -345,7 +345,7 @@ local function handleEvent(ev)
         diffY = diffY + ev[2]
     end
     if pagedata.eventHooks[ev] then
-        for i,a in pairs(pagedata.eventHooks) do
+        for i,a in pairs(pagedata.eventHooks[ev]) do
             a(table.unpack(ev,2))
         end
     end

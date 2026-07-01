@@ -28,3 +28,5 @@ structure a serialized lua table
   ["script"] = "lua script",
 }
 ```
+
+the colors are now this format : colors.<color name>

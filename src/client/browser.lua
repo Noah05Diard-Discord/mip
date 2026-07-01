@@ -294,6 +294,7 @@ local function render()
     write("X")
     term.setBackgroundColor(colors.black)
     local t = term.current()
+    pagedata.pagewin.setVisible(false)
     term.redirect(pagedata.pagewin)
 
     term.setBackgroundColor(getBackground())
@@ -312,6 +313,8 @@ local function render()
         end
     end
 
+    
+    pagedata.pagewin.setVisible(true)
     term.redirect(t)
 end
 

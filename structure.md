@@ -29,4 +29,4 @@ structure a serialized lua table
 }
 ```
 
-the colors are now this format : colors.<color name>
+the colors are now this format : colors.color name

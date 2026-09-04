@@ -1,0 +1,70 @@
+{
+  ["objs"] = {
+    {
+      type = "text",
+      text = "Router Administration",
+      x = 1,
+      y = 2
+    }
+  },
+  ["style"] = {
+    ["body"] = {
+      ["background"] = colors.black,
+      ["textColor"] = colors.white,
+    },
+    ["text"] = {
+      ["background"] = colors.black,
+      ["textColor"] = colors.white,
+    },
+    ["button"] = {
+      ["background"] = colors.blue,
+      ["textColor"] = colors.white,
+    },
+    ["textbox"] = {
+      ["background"] = colors.white,
+      ["textColor"] = colors.black
+    },
+    [".red"] = {
+      ["background"] = colors.black,
+      ["textColor"] = colors.red
+    }
+  },
+  ["title"] = "Panel",
+  ["description"] = "Router Administration",
+  ["script"] = [[
+document.addElement({
+    type = "textbox",
+    text = "",
+    placeholder = "Password here...",
+    id = "passwordbox",
+    x = 2,
+    y = 3
+})
+document.addElement({
+    type = "button",
+    text = "Login",
+    id = "loginbtn",
+    x = 2,
+    y = 5
+})
+document.addElement({
+    type = "text",
+    text = "",
+    id = "status",
+    class = "red",
+    x = 8,
+    y = 5
+})
+event.hook("button",function(id)
+    if id == "loginbtn" then
+        local txtBox = document.getElementById("passwordbox")
+        local statusLbl = document.getElementById("status")
+        if txtBox.text == "" then
+            statusLbl.text = "Password must not be empty"
+        else
+            document.redirect("router.local","dpa?"..txtBox.text)
+        end
+    end
+end)
+  ]],
+}

@@ -1,0 +1,7 @@
+{
+    ["objs"] = {},
+    ["style"] = {},
+    ["title"] = "",
+    ["description"] = "",
+    ["script"] = [[document.redirect("router.local","index")]]
+}

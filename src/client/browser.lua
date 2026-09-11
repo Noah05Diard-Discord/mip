@@ -397,6 +397,11 @@ local function handleEvent(ev)
     if ev[1] == "mouse_click" and not dmc then
         pagedata.selectedTextBox = nil
     end
+    if pagedata.eventHooks[ev[1]] then
+        for _, hook in ipairs(pagedata.eventHooks[ev[1]]) do
+            hook(table.unpack(ev,2))
+        end
+    end
 end
 
 sandbox.registerApi("document",{

@@ -204,10 +204,9 @@ local function loadPage(page,pcid)
     for _, obj in ipairs(page.objs) do
         if obj.type == "canvas" then
             obj.__internal = {
-                window = window.create(pagedata.win,obj.x,obj.y,obj.w,obj.y)
+                window = window.create(pagedata.pagewin,obj.x,obj.y,obj.w,obj.h)
             }
             obj.__internal.window.write("Hello")
-            sleep(1)
             if not obj.__internal.window then
                 loadPage({
                     objs = {

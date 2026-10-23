@@ -5,7 +5,11 @@ local components = {
     "client/sandbox.lua",
     "client/mipProtocol.lua",
     "dns/dns-sys.lua",
-    "server/server.lua"
+    "server/server.lua",
+    "router/router.lua",
+    "router/routerPages/404.table",
+    "router/routerPages/index.table",
+    "router/routerPages/indexerr.table"
 }
 
 local programs = {
@@ -22,6 +26,10 @@ local programs = {
     dns = {
         entry = "dns/dns-sys.lua",
         4
+    },
+    router = {
+        entry = "router/router.lua",
+        6,7,8,9
     }
 }
 

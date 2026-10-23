@@ -6,6 +6,8 @@ local maxY = 0
 
 local w,h = term.getSize()
 
+local primaryTerm = term.current()
+
 local defaultStyle = {
     ["body"] = {
         ["background"] = colors.white,
@@ -131,8 +133,7 @@ renderers.textbox = function(obj)
 end
 
 renderers.canvas = function(obj)
-    obj.__internal.win.setVisible(true)
-    obj.__internal.win.setVisible(false)
+    obj.__internal.window.redraw()
 end
 
 renderers.picture = function(obj)
@@ -205,10 +206,23 @@ local function loadPage(page,pcid)
             obj.__internal = {
                 window = window.create(pagedata.win,obj.x,obj.y,obj.w,obj.y)
             }
+            obj.__internal.window.write("Hello")
+            sleep(1)
+            if not obj.__internal.window then
+                loadPage({
+                    objs = {
+                    {
+                        type = "text",
+                        text = "a canvas is unable to load.."
+                    }}
+                })
+                return
+            end
         elseif obj.type == "picture" then
             local p, err = protocol.download(pcid,obj.page)
             if not p then
                 loadPage({
+                    objs = {
                     {
                         type = "text",
                         text = "Error loading a picture:"
@@ -216,13 +230,13 @@ local function loadPage(page,pcid)
                     {
                         type = "text",
                         text = err
-                    },
+                    },},
                     title = "Error"
                 })
                 return
             end
             obj.__internal = {
-                nfp = paintutils.loadImage(p)
+                nfp = paintutils.parseImage(p)
             }
         end
     end
@@ -352,7 +366,6 @@ local function render()
         end
     end
 
-    
     pagedata.pagewin.setVisible(true)
     term.redirect(t)
 end
@@ -466,7 +479,7 @@ sandbox.registerApi("document",{
     getCanvasFromId = function(id)
         for i, a in ipairs(pagedata.page.objs) do
             if a.id == id and a.type == "canvas" then
-                return a.__internal.canvas
+                return a.__internal.window
             end
         end
     end
@@ -641,6 +654,7 @@ loadPage({
 local er
 
 local suc, r = xpcall(browserLoop,function(err)
+    term.redirect(primaryTerm)
     er = err
     if err ~= "Terminated" then
         clr()

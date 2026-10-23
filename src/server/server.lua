@@ -17,6 +17,7 @@ local function getDownload(file)
         handle.close()
         return data
     else
+        print("File not found. :", path)
         return nil
     end
 end
@@ -44,6 +45,8 @@ local function getPage(page)
             ret,err = pcall(succ)
             if not ret then
                 ret = {objs={{type="text",text="Internal Server Error"}}}
+                print("SERVER ERROR")
+                printError(err)
             else
                 ret = err
             end
@@ -92,7 +95,7 @@ while true do
                     ["destination"] = "CLIENT",
                     ["id"] = pack.id,
                     ["reply"] = {
-                        ["success"] = file == true,
+                        ["success"] = file and true or false,
                         ["data"] = file
                     }
                 })

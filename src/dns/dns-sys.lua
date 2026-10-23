@@ -28,7 +28,7 @@ local function lookupThread()
         local p = ev[5]
         if p.destination == "DNS" then
             if p.action == "get_domain" then
-                print("\"",p.arg,"\"",lookup[p.arg])
+                -- print("\"",p.arg,"\"",lookup[p.arg])
                 modem.transmit(80,80,{
                     ["destination"] = "CLIENT",
                     ["id"] = p.id,
@@ -44,8 +44,7 @@ end
 
 local function interfaceThread()
     while true do
-        local ev ={os.pullEvent("mouse_click")}
-
+        
     end
 end
 

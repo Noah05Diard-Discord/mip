@@ -119,7 +119,7 @@ renderers.text = function(obj,i)
 end
 
 renderers.button = function(obj,i)
-    term.setCursorPos(obj.x,obj.y)
+    term.setCursorPos(obj.x or 1,obj.y or i)
     setColors(getColors(obj))
     term.write(obj.text)
 end
@@ -128,6 +128,15 @@ renderers.textbox = function(obj)
     term.setCursorPos(obj.x,obj.y)
     setColors(getColors(obj))
     term.write(obj.text == "" and obj.placeholder or obj.text)
+end
+
+renderers.canvas = function(obj)
+    obj.__internal.win.setVisible(true)
+    obj.__internal.win.setVisible(false)
+end
+
+renderers.picture = function(obj)
+    paintutils.drawImage(obj.__internal.nfp,obj.x,obj.y)
 end
 
 local function fileDialog()
@@ -190,6 +199,36 @@ local function loadPage(page,pcid)
     pagedata.selectedTextBox = nil
     pagedata.pcid = pcid or os.getComputerID()
     diffY = 0
+
+    for _, obj in ipairs(page.objs) do
+        if obj.type == "canvas" then
+            obj.__internal = {
+                window = window.create(pagedata.win,obj.x,obj.y,obj.w,obj.y)
+            }
+        elseif obj.type == "picture" then
+            local p, err = protocol.download(pcid,obj.page)
+            if not p then
+                loadPage({
+                    {
+                        type = "text",
+                        text = "Error loading a picture:"
+                    },
+                    {
+                        type = "text",
+                        text = err
+                    },
+                    title = "Error"
+                })
+                return
+            end
+            obj.__internal = {
+                nfp = paintutils.loadImage(p)
+            }
+        end
+    end
+
+    if multishell then multishell.setTitle(multishell.getCurrent(), page.title) end
+
     if page.script then
         local func = sandbox.load(page.script)
         local error = false
@@ -423,6 +462,13 @@ sandbox.registerApi("document",{
     end,
     redirect = function(web,page)
         loadWeb(web,page)
+    end,
+    getCanvasFromId = function(id)
+        for i, a in ipairs(pagedata.page.objs) do
+            if a.id == id and a.type == "canvas" then
+                return a.__internal.canvas
+            end
+        end
     end
 })
 
@@ -460,6 +506,9 @@ sandbox.registerApi("browser",{
         local f = fs.open(fs.combine("/downloads/",fs.combine(file)),"w")
         f.write(data)
         f.close()
+    end,
+    pageChangeDialog = function()
+        return pageChangeDialog()
     end
 })
 
@@ -513,8 +562,7 @@ local function browserLoop()
     end
 end
 
-
-
+-- System Tab Page
 loadPage({
     objs = {
         {
@@ -608,4 +656,3 @@ if not suc then
 end
 
 clr()
-r()

@@ -3,6 +3,8 @@
 -- Redistribution is not allowed.
 -- Stealing the code is not allowed (except if authorized).
 -- Using git.lua on this script is strictly prohibited.
+-- PATCHED FOR PORT 12000
+print("PATCHED FOR PORT 12000")
 
 print("Smart Router is starting...")
 local pcId = os.getComputerID()
@@ -419,7 +421,17 @@ while true do
                 -- port is in allow list, forward the message to internal
                 iP.transmit(v, v, e[5])
                 if type(e[5]) == "table" then
-                    currentRequests = currentRequests + #textutils.serialize(e[5],{compact=true})
+                    local function disposable()
+						currentRequests = currentRequests + #textutils.serialize(e[5],{compact=true})
+					end
+					local ok, err = pcall(disposable)
+					if not ok then
+						print("AN ERROR HAS OCCURED BUT GOT CAUGHT: " .. err)
+						print("THIS IS A BUG WITH CHANNEL 12000, IGNORE IT")
+						print("CHANNEL : "..e[3])
+						print("SINCE CANT MESURE SIZE, WILL ADD ONLY 1B")
+						currentRequests = currentRequests + 1
+					end
                 else
                     currentRequests = currentRequests + #e[5]
                 end

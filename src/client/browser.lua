@@ -475,6 +475,9 @@ sandbox.registerApi("document",{
     getPage = function()
         return pagedata.origin
     end,
+    getPageEndpoint = function()
+        return page.path
+    end,
     redirect = function(web,page)
         loadWeb(web,page)
     end,
@@ -524,9 +527,6 @@ sandbox.registerApi("browser",{
     end,
     pageChangeDialog = function()
         return pageChangeDialog()
-    end,
-    getPageEndpoint = function()
-        return page.path
     end
 })
 

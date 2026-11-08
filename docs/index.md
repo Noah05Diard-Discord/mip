@@ -29,11 +29,20 @@ document.addElement({
 
 ### ```getPage()```
 
-This function returns the page (not address)
+This function returns the address
 
 Example
 ```lua
-local page = document.getPage()
+local addr = document.getPage()
+```
+
+### ```getPageEndpoint()```
+
+This function returns the endpoint (page)
+
+Example
+```lua
+local page = document.getPageEndpoint()
 ```
 
 ### ```redirect(web: string, page: string)```
@@ -43,6 +52,15 @@ Changes the current website. Web is address and page is the pae
 Example
 ```lua
 document.redirect("example.com","/")
+```
+
+### ```getCanvasFromId(web: string, page: string)```
+
+Gets a canvas from id (Canvas is a terminal object)
+
+Example
+```lua
+local canvas = browser.getCanvasFromId("myCanvas")
 ```
 
 ---

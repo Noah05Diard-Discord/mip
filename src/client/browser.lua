@@ -80,6 +80,7 @@ local pagedata = {
     pagewin = window.create(term.current(),1,2,w,h-1),
     selectedTextBox = nil,
     origin = "browser",
+    path = "",
     pcid = 0
 }
 
@@ -277,6 +278,7 @@ local function loadWeb(web,page)
         if p then
             loadPage(p,web)
             pagedata.origin = tostring(web)
+            pagedata.path = tostring(page)
         else
             loadPage({
                 objs = {
@@ -296,6 +298,7 @@ local function loadWeb(web,page)
         if p then
             loadPage(p,resolve)
             pagedata.origin = web
+            pagedata.path = tostring(page)
         else
             loadPage({
                 objs = {
@@ -521,6 +524,9 @@ sandbox.registerApi("browser",{
     end,
     pageChangeDialog = function()
         return pageChangeDialog()
+    end,
+    getPageEndpoint = function()
+        return page.path
     end
 })
 

@@ -276,9 +276,9 @@ local function loadWeb(web,page)
         print("sup pcid")
         local p, err = protocol.get_page(web,page)
         if p then
-            loadPage(p,web)
-            pagedata.origin = tostring(web)
+            pagedata.origin = web
             pagedata.path = tostring(page)
+            loadPage(p,web)
         else
             loadPage({
                 objs = {
@@ -296,9 +296,9 @@ local function loadWeb(web,page)
     if resolve then
         local p, err = protocol.get_page(resolve,page)
         if p then
-            loadPage(p,resolve)
             pagedata.origin = web
             pagedata.path = tostring(page)
+            loadPage(p,resolve)
         else
             loadPage({
                 objs = {

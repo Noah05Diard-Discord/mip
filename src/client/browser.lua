@@ -476,7 +476,7 @@ sandbox.registerApi("document",{
         return pagedata.origin
     end,
     getPageEndpoint = function()
-        return page.path
+        return pagedata.path
     end,
     redirect = function(web,page)
         loadWeb(web,page)

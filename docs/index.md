@@ -45,6 +45,28 @@ Example
 local page = document.getPageEndpoint()
 ```
 
+### ```getOldPage()```
+
+This function returns the old "web" like if you were on the domain amongus.com, this will return "amongus.com"
+
+Example
+```lua
+local oldweb = document.getOldPage()
+document.redirect(oldweb, "a page ig")
+```
+
+### ```getOldPageEndpoint()```
+
+This function returns the old "page" like if you were on the page amongus, this will return "amongus"
+
+Example
+```
+-- A go back button
+local oldweb = document.getOldPage()
+local oldpage = document.getOldPageEndpoint()
+document.redirect(oldweb,oldpage)
+```
+
 ### ```redirect(web: string, page: string)```
 
 Changes the current website. Web is address and page is the pae

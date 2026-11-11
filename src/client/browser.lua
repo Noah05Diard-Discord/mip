@@ -81,7 +81,9 @@ local pagedata = {
     selectedTextBox = nil,
     origin = "browser",
     path = "",
-    pcid = 0
+    pcid = 0,
+    oldassWeb = nil,
+    oldassPage = nil
 }
 
 local function setColors(bg,tx)
@@ -276,6 +278,8 @@ local function loadWeb(web,page)
         print("sup pcid")
         local p, err = protocol.get_page(web,page)
         if p then
+            pagedata.oldassWeb = pagedata.origin
+            pagedata.oldassPage = pagedata.path
             pagedata.origin = web
             pagedata.path = tostring(page)
             loadPage(p,web)
@@ -296,6 +300,8 @@ local function loadWeb(web,page)
     if resolve then
         local p, err = protocol.get_page(resolve,page)
         if p then
+            pagedata.oldassWeb = pagedata.origin
+            pagedata.oldassPage = pagedata.path
             pagedata.origin = web
             pagedata.path = tostring(page)
             loadPage(p,resolve)
@@ -477,6 +483,12 @@ sandbox.registerApi("document",{
     end,
     getPageEndpoint = function()
         return pagedata.path
+    end,
+    getOldPage = function()
+        return pagedata.oldassWeb
+    end,
+    getOldPageEndpoint = function()
+        return pagedata.oldassPage
     end,
     redirect = function(web,page)
         loadWeb(web,page)

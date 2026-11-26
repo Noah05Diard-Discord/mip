@@ -419,7 +419,7 @@ while true do
         for i,v in ipairs(ports) do
             if e[3] == v and (currentRequests < normalLimiter or normalLimiter == -1) then
                 -- port is in allow list, forward the message to internal
-                iP.transmit(v, v, e[5])
+                iP.transmit(v, e[4], e[5])
                 if type(e[5]) == "table" then
                     local function disposable()
 						currentRequests = currentRequests + #textutils.serialize(e[5],{compact=true})
@@ -459,7 +459,7 @@ while true do
         for i,v in ipairs(ports) do
             if e[3] == v then
                 -- port is in allow list, forward the message to external
-                oP.transmit(v, v, e[5])
+                oP.transmit(v, e[4], e[5])
                 print("Port is in allow list, forwarding message to external network")
             end
         end
